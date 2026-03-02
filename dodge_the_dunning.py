@@ -11,9 +11,9 @@ invoice_img = pygame.image.load('assets/invoice.png').convert_alpha()
 av_user_img = pygame.image.load('assets/avarege_user.png').convert_alpha()
 bg_img = pygame.image.load('assets/office_background.png').convert()
 
-smartphone_sprite = pygame.transform.scale(smartphone_img, (120, 80))
-invoice_sprite = pygame.transform.scale(invoice_img, (120, 80))
-av_user_sprite = pygame.transform.scale(av_user_img, (240, 120))
+smartphone_sprite = pygame.transform.scale(smartphone_img, (60, 60))
+invoice_sprite = pygame.transform.scale(invoice_img, (60, 60))
+av_user_sprite = pygame.transform.scale(av_user_img, (100, 100))
 bg_sprite = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
 
 class FallingItem:
