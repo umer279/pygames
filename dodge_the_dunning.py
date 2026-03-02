@@ -18,7 +18,7 @@ bg_sprite = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
 
 class FallingItem:
     def __init__(self):
-        self.size = 50  # Larger items are harder to dodge!
+        self.size = 50
         self.x = random.randint(0, WIDTH - self.size)
         self.y = -self.size
         self.speed = random.randint(4, 8)
@@ -41,11 +41,14 @@ player_speed = 10
 score = 0
 
 all_items = []
-running = True
 
 pygame.font.init()
 score_font = pygame.font.SysFont('Arial', 32, True)
 
+time_limit = 60  
+start_ticks = pygame.time.get_ticks() 
+
+running = True
 while running:
     screen.blit(bg_sprite, (0, 0))
     
@@ -53,7 +56,13 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # 2. Player Movement (A and D keys)
+    seconds_passed = (pygame.time.get_ticks() - start_ticks) / 1000
+    time_left = max(0, time_limit - seconds_passed)
+
+    if time_left <= 0:
+        print("Time's up!")
+        running = False 
+
     keys = pygame.key.get_pressed()
     if keys[pygame.K_a] and player_x > 0:
         player_x -= player_speed
@@ -62,12 +71,11 @@ while running:
     
     player_rect = pygame.Rect(player_x, player_y, player_width, player_height)
 
-    # 3. Spawning Logic (Max 3 items)
     # Spawns only if there are fewer than 3 on screen AND a random chance hits
     if len(all_items) < 3 and random.randint(1, 30) == 1:
         all_items.append(FallingItem())
 
-    # 4. Update and Draw Items
+    # Update and Draw Items
     for item in all_items[:]:
         item.fall()
         item.draw(screen)
@@ -76,21 +84,24 @@ while running:
         if player_rect.colliderect(item.rect):
             if item.type == "GOOD":
                 score += 1
-                print(f"Score: {score}")
             else:
                 score -= 2
-                print("Ouch! Hit a bomb!")
             all_items.remove(item)
 
         # Remove if off-screen
         elif item.y > HEIGHT:
             all_items.remove(item)
 
-    # 5. Draw Player
+    # player
     screen.blit(av_user_sprite, (player_x, player_y))
 
+    # points
     score_text = score_font.render(f"PROFIT: ${score * 100}", True, (255, 215, 0))
     screen.blit(score_text, (20, 20))
+
+    #time
+    timer_text = score_font.render(f"Time Left: {int(time_left)}s", True, (255, 255, 255))
+    screen.blit(timer_text, (20, 60))
 
     pygame.display.flip()
     clock.tick(60)
